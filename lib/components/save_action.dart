@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
-
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -19,8 +18,15 @@ class SaveButton extends StatelessWidget {
 
   Future<void> _saveCanvasAsImage(BuildContext context) async {
     try {
-      RenderRepaintBoundary boundary = canvasKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
-      ui.Image image = await boundary.toImage(pixelRatio: 3.0);
+      final renderObject = canvasKey.currentContext?.findRenderObject();
+      if (renderObject is! RenderRepaintBoundary) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Canvas tidak tersedia untuk disimpan.')),
+        );
+        return;
+      }
+
+      ui.Image image = await renderObject.toImage(pixelRatio: 3.0);
       ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
 
       if (byteData != null) {
@@ -29,9 +35,7 @@ class SaveButton extends StatelessWidget {
         final file = File('${directory.path}/outfit_${DateTime.now().millisecondsSinceEpoch}.png');
         await file.writeAsBytes(pngBytes);
 
-        if (onImageSaved != null) {
-          onImageSaved!(file);
-        }
+        onImageSaved?.call(file);
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Outfit berhasil disimpan ke Wardrobe!')),

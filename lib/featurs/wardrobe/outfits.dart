@@ -3,61 +3,13 @@ import 'package:flutter/material.dart';
 
 class OutfitsTab extends StatelessWidget {
   final List<File> savedOutfits;
-  final Function(File) onDeleteOutfit;
+  final void Function(File) onDeleteOutfit;
 
   const OutfitsTab({
     Key? key,
     required this.savedOutfits,
     required this.onDeleteOutfit,
   }) : super(key: key);
-
-  Future<void> _showDeleteDialog(BuildContext context, File outfit) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Delete Outfit?'),
-        content: const Text('Are you sure you want to delete this outfit?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFF27255)),
-            onPressed: () => Navigator.pop(context, true),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: const [
-                Icon(Icons.delete, color: Colors.white),
-                SizedBox(width: 8),
-                Text('Delete', style: TextStyle(color: Colors.white)),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-
-    if (confirmed == true) {
-      onDeleteOutfit(outfit);
-    }
-  }
-
-  Future<void> _onImageTap(BuildContext context, File file) async {
-    final shouldDelete = await Navigator.of(context).push(PageRouteBuilder(
-      opaque: false,
-      barrierDismissible: true,
-      pageBuilder: (_, __, ___) => _ZoomDeletePhotoOverlay(
-        imageFile: file,
-        onDelete: () => Navigator.of(context).pop(true),
-      ),
-      transitionDuration: const Duration(milliseconds: 300),
-    ));
-
-    if (shouldDelete == true) {
-      onDeleteOutfit(file);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -82,16 +34,29 @@ class OutfitsTab extends StatelessWidget {
       itemBuilder: (context, index) {
         final file = savedOutfits[index];
         return GestureDetector(
-          onTap: () => _onImageTap(context, file),
+          onTap: () async {
+            final shouldDelete = await Navigator.of(context).push(
+              PageRouteBuilder(
+                opaque: false,
+                barrierDismissible: true,
+                pageBuilder: (_, __, ___) => _ZoomDeletePhotoOverlay(
+                  imageFile: file,
+                  onDelete: () => Navigator.of(context).pop(true),
+                ),
+                transitionDuration: const Duration(milliseconds: 300),
+              ),
+            );
+
+            if (shouldDelete == true) {
+              onDeleteOutfit(file);
+            }
+          },
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
               color: Colors.grey[100],
-              border: Border.all(
-                color: Colors.black,
-                width: 2,
-              ),
-              boxShadow: [
+              border: Border.all(color: Colors.black, width: 2),
+              boxShadow: const [
                 BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2)),
               ],
             ),
@@ -121,17 +86,14 @@ class _ZoomDeletePhotoOverlay extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.black54,
       body: GestureDetector(
-        onTap: () => Navigator.of(context).pop(false), // tap luar tutup
+        onTap: () => Navigator.of(context).pop(false),
         child: Center(
           child: Stack(
             children: [
               Center(
-                child: Hero(
-                  tag: imageFile.path,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(16),
-                    child: Image.file(imageFile),
-                  ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Image.file(imageFile),
                 ),
               ),
               Positioned(
@@ -150,7 +112,10 @@ class _ZoomDeletePhotoOverlay extends StatelessWidget {
                         title: const Text('Delete Outfit?'),
                         content: const Text('Are you sure you want to delete this outfit?'),
                         actions: [
-                          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+                          TextButton(
+                            onPressed: () => Navigator.pop(ctx, false),
+                            child: const Text('Cancel'),
+                          ),
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                             onPressed: () => Navigator.pop(ctx, true),

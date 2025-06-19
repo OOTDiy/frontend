@@ -1,13 +1,15 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'items.dart';
-import 'outfits.dart'; // import OutfitsTab yang sudah kamu buat
+import 'outfits.dart';
+import 'package:untitled1/widgets/profile_avatar.dart';
+import 'package:untitled1/views/profile/profile_screen.dart';
 
 class WardrobeScreen extends StatefulWidget {
   final List<Map<String, dynamic>> initialImages;
-  final List<File> initialOutfits;  // <-- tambah ini
+  final List<File> initialOutfits;
   final Function(List<Map<String, dynamic>>) onItemsChanged;
-  final Function(List<File>) onOutfitsChanged;  // <-- tambah ini
+  final Function(List<File>) onOutfitsChanged;
 
   const WardrobeScreen({
     Key? key,
@@ -23,14 +25,14 @@ class WardrobeScreen extends StatefulWidget {
 
 class _WardrobeScreenState extends State<WardrobeScreen> {
   late List<Map<String, dynamic>> images;
-  late List<File> outfits;  // <-- list outfit disimpan di sini
+  late List<File> outfits;
   int _selectedIndex = 0;
 
   @override
   void initState() {
     super.initState();
     images = List.from(widget.initialImages);
-    outfits = List.from(widget.initialOutfits);  // inisialisasi outfit
+    outfits = List.from(widget.initialOutfits);
   }
 
   void _updateImages(List<Map<String, dynamic>> updatedImages) {
@@ -117,10 +119,36 @@ class _WardrobeScreenState extends State<WardrobeScreen> {
         child: Column(
           children: [
             const SizedBox(height: 40),
-            const Center(
-              child: Text(
-                'Wardrobe',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            // Header: Wardrobe (centered) + Profile Avatar (right)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  const Center(
+                    child: Text(
+                      'Wardrobe',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const ProfileScreen(),
+                          ),
+                        );
+                      },
+                      child: const ProfileAvatar(),
+                    ),
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 8),

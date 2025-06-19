@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart'; // ini halaman utama
-import 'views/landing.dart';  // ini splash landing SVG
+import 'package:flutter/material.dart';
+import 'views/screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         scaffoldBackgroundColor: Colors.white,
       ),
-      home: const LandingPage(), // ← Tampilkan LandingPage dulu
+      home: const Screen(),
       debugShowCheckedModeBanner: false,
     );
   }

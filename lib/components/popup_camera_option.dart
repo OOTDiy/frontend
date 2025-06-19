@@ -4,14 +4,13 @@ import 'package:flutter_svg/flutter_svg.dart';
 Future<String?> showCameraOptionPopup(BuildContext context) {
   return showDialog<String>(
     context: context,
-    barrierDismissible: false, // supaya tidak bisa tap di luar untuk close
+    barrierDismissible: false,
     builder: (context) => AlertDialog(
-      backgroundColor: Colors.white, // background putih
+      backgroundColor: Colors.white,
       contentPadding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Bar atas dengan tombol back
           Row(
             children: [
               GestureDetector(
@@ -26,7 +25,7 @@ Future<String?> showCameraOptionPopup(BuildContext context) {
             ],
           ),
           const SizedBox(height: 16),
-          // Pilihan kamera dan galeri
+          // select mau kamera atau galeri
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [

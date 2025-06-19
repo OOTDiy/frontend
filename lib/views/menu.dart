@@ -177,7 +177,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-// Painter untuk bottom nav lengkung
 class _BottomNavPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {

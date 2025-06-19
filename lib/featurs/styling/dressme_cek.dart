@@ -14,7 +14,7 @@ class DressMeCek extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (selectedImages.isEmpty) {
-      return const SizedBox.shrink(); // kosong total tanpa widget apapun
+      return const SizedBox.shrink();
     }
 
     return RepaintBoundary(

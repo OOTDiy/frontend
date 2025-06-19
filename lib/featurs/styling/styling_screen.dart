@@ -1,7 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'styling_dressme.dart';  // DressMeSection
-import 'styling_canvas.dart';  // CanvasSection
+import 'styling_dressme.dart';
+import 'styling_canvas.dart';
+import 'package:untitled1/widgets/profile_avatar.dart';
+import 'package:untitled1/views/profile/profile_screen.dart';
 
 class StylingScreen extends StatefulWidget {
   final List<Map<String, dynamic>> images;
@@ -14,14 +16,12 @@ class StylingScreen extends StatefulWidget {
 
 class _StylingScreenState extends State<StylingScreen> {
   int _selectedIndex = 0;
-
   List<Map<String, dynamic>> selectedDressMeImages = [];
   late List<Map<String, dynamic>> canvasImages;
 
   @override
   void initState() {
     super.initState();
-    // Inisialisasi canvasImages dengan offset default dan key unik tiap image
     canvasImages = widget.images
         .map((img) => {
       ...img,
@@ -32,7 +32,6 @@ class _StylingScreenState extends State<StylingScreen> {
   }
 
   void onDressMeImageClicked(Map<String, dynamic> img) {
-    // Cek apakah image sudah ada di selectedDressMeImages
     bool exists = selectedDressMeImages.any((e) => e['image'].path == img['image'].path);
     if (!exists) {
       setState(() {
@@ -45,10 +44,8 @@ class _StylingScreenState extends State<StylingScreen> {
     setState(() {
       int index = canvasImages.indexWhere((img) => img['image'].path == newImg['image'].path);
       if (index == -1) {
-        // Kalau belum ada, tambahkan baru dengan posisi offset baru
         canvasImages.add({...newImg, 'offset': newOffset, 'key': UniqueKey()});
       } else {
-        // Update posisi offset untuk image yang sudah ada
         canvasImages[index]['offset'] = newOffset;
       }
     });
@@ -60,13 +57,10 @@ class _StylingScreenState extends State<StylingScreen> {
     });
   }
 
-  // Callback saat user tekan tombol save di DressMeSection
   void onSaveOutfit(List<Map<String, dynamic>> selectedItems, File? fullOutfitImage) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Outfit saved with ${selectedItems.length} items!')),
     );
-
-    // Bisa tambah logika simpan data ke database atau storage di sini
   }
 
   Widget buildTabBar() {
@@ -75,7 +69,6 @@ class _StylingScreenState extends State<StylingScreen> {
       height: 40,
       child: Stack(
         children: [
-          // Garis abu-abu bawah
           Positioned(
             bottom: 0,
             left: 0,
@@ -88,7 +81,6 @@ class _StylingScreenState extends State<StylingScreen> {
               buildTabItem(title: 'Canvas', index: 1),
             ],
           ),
-          // Indikator garis bawah tab aktif
           AnimatedPositioned(
             duration: const Duration(milliseconds: 200),
             curve: Curves.easeInOut,
@@ -131,10 +123,31 @@ class _StylingScreenState extends State<StylingScreen> {
         child: Column(
           children: [
             const SizedBox(height: 40),
-            const Center(
-              child: Text(
-                'Styling',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  const Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      'Styling',
+                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const ProfileScreen()),
+                        );
+                      },
+                      child: const ProfileAvatar(),
+                    ),
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 8),

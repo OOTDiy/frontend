@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:untitled1/components/delete_actions.dart';  // import fungsi popup delete
+import 'package:untitled1/components/delete_actions.dart';
 
 class CategoryConstants {
   static const all = 'All';
@@ -133,7 +133,7 @@ class _ItemsTabState extends State<ItemsTab> {
     return GridView.builder(
       padding: const EdgeInsets.all(12),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2, // 2 kolom
+        crossAxisCount: 2,
         mainAxisSpacing: 12,
         crossAxisSpacing: 12,
         childAspectRatio: 0.75,
@@ -168,7 +168,7 @@ class _ItemsTabState extends State<ItemsTab> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start, // supaya "Items Filter" rata kiri
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 16),
         const Padding(

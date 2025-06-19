@@ -23,7 +23,6 @@ class DressMeSection extends StatefulWidget {
 class _DressMeSectionState extends State<DressMeSection> {
   late List<Map<String, dynamic>> _selectedImages;
 
-  // Perbaikan: pakai 'Bottoms' sesuai data input dari kamera
   final List<String> categoryOrder = const ['Tops', 'Bottoms', 'Outwear', 'Footwear', 'Other'];
   String selectedCategory = 'Tops';
 

@@ -1,31 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'menu.dart'; // ← ini penting, agar bisa pindah ke HomeScreen
+import 'package:untitled1/featurs/accounts/signin.dart';
 
-class LandingPage extends StatefulWidget {
-  const LandingPage({Key? key}) : super(key: key);
+class Screen extends StatefulWidget {
+  const Screen({Key? key}) : super(key: key);
 
   @override
-  State<LandingPage> createState() => _LandingPageState();
+  State<Screen> createState() => _ScreenState();
 }
 
-class _LandingPageState extends State<LandingPage> {
+class _ScreenState extends State<Screen> {
   bool _visible = false;
 
   @override
   void initState() {
     super.initState();
 
-    // Fade-in animasi
+    // Animasi fade-in
     Future.delayed(const Duration(milliseconds: 300), () {
       setState(() => _visible = true);
     });
 
-    // Pindah ke HomeScreen setelah 2 detik
     Future.delayed(const Duration(seconds: 2), () {
       if (mounted) {
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => const HomeScreen()),
+          MaterialPageRoute(builder: (_) => const SignInScreen()),
         );
       }
     });

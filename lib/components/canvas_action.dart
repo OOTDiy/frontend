@@ -9,9 +9,9 @@ class CanvasActionsManager {
 
   void save(List<Map<String, dynamic>> currentState) {
     final copiedState = currentState.map((item) => {
-      'image': item['image'], // File tidak perlu disalin ulang
-      'offset': Offset(item['offset'].dx, item['offset'].dy), // Salin offset
-      'key': UniqueKey(), // Bikin key baru agar tidak konflik
+      'image': item['image'],
+      'offset': Offset(item['offset'].dx, item['offset'].dy),
+      'key': UniqueKey(),
     }).toList();
 
     _history.add(copiedState);
