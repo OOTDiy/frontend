@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="default_web_client_id" translatable="false">994708148838-sq45sbklpnse5qott8ufaclq68r1bj67.apps.googleusercontent.com</string>
+    <string name="gcm_defaultSenderId" translatable="false">994708148838</string>
+    <string name="google_api_key" translatable="false">AIzaSyAkBMVsbbfE3qvA0rGoQJKJLL0FN_-hSEg</string>
+    <string name="google_app_id" translatable="false">1:994708148838:android:c3bc84a3fa58e578a513a7</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyAkBMVsbbfE3qvA0rGoQJKJLL0FN_-hSEg</string>
+    <string name="google_storage_bucket" translatable="false">ootdiy.firebasestorage.app</string>
+    <string name="project_id" translatable="false">ootdiy</string>
+</resources>

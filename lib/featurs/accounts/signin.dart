@@ -3,14 +3,16 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:untitled1/views/menu.dart';
 import 'signup.dart';
 import 'forgot_password.dart';
+import 'package:untitled1/services/auth_service.dart';
 
 class SignInScreen extends StatelessWidget {
   const SignInScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController usernameController = TextEditingController();
+    final TextEditingController emailController = TextEditingController();
     final TextEditingController passwordController = TextEditingController();
+    bool obscureText = true;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -21,7 +23,6 @@ class SignInScreen extends StatelessWidget {
             child: Column(
               children: [
                 const SizedBox(height: 40),
-                // Logo Placeholder
                 Center(
                   child: Column(
                     children: [
@@ -35,16 +36,17 @@ class SignInScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 1),
 
-                // Username field
+                // Email field
                 Align(
                   alignment: Alignment.centerLeft,
-                  child: const Text("Username"),
+                  child: const Text("Email"),
                 ),
                 const SizedBox(height: 6),
                 TextField(
-                  controller: usernameController,
+                  controller: emailController,
+                  keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
-                    hintText: "Input username",
+                    hintText: "Input email",
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -58,16 +60,29 @@ class SignInScreen extends StatelessWidget {
                   child: const Text("Password"),
                 ),
                 const SizedBox(height: 6),
-                TextField(
-                  controller: passwordController,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    hintText: "Input password",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    suffixIcon: const Icon(Icons.visibility),
-                  ),
+                StatefulBuilder(
+                  builder: (context, setState) {
+                    return TextField(
+                      controller: passwordController,
+                      obscureText: obscureText,
+                      decoration: InputDecoration(
+                        hintText: "Input password",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            obscureText ? Icons.visibility_off : Icons.visibility,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              obscureText = !obscureText;
+                            });
+                          },
+                        ),
+                      ),
+                    );
+                  },
                 ),
                 const SizedBox(height: 8),
 
@@ -90,8 +105,8 @@ class SignInScreen extends StatelessWidget {
                         decoration: TextDecoration.underline,
                       ),
                     ),
-                    ),
                   ),
+                ),
 
                 const SizedBox(height: 16),
 
@@ -104,12 +119,34 @@ class SignInScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  onPressed: () {
-                    // Replace this with your actual sign in logic
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (_) => const HomeScreen()),
-                    );
+                  onPressed: () async {
+                    final email = emailController.text.trim();
+                    final password = passwordController.text.trim();
+
+                    if (email.isEmpty || password.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Please fill in all fields")),
+                      );
+                      return;
+                    }
+
+                    try {
+                      final user = await AuthService().signInWithEmail(
+                        email: email,
+                        password: password,
+                      );
+
+                      if (user != null) {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (_) => const HomeScreen()),
+                        );
+                      }
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Login failed: ${e.toString()}")),
+                      );
+                    }
                   },
                   child: const Text(
                     "Sign in",
@@ -150,11 +187,23 @@ class SignInScreen extends StatelessWidget {
                     "Sign in with Google",
                     style: TextStyle(color: Colors.black),
                   ),
-
-                  onPressed: () {
-                    // Google sign-in logic here
+                  onPressed: () async {
+                    try {
+                      final user = await AuthService().signInWithGoogle();
+                      if (user != null) {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (_) => const HomeScreen()),
+                        );
+                      }
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Google sign-in failed: ${e.toString()}")),
+                      );
+                    }
                   },
                 ),
+
                 const SizedBox(height: 32),
 
                 // Sign up
@@ -173,7 +222,7 @@ class SignInScreen extends StatelessWidget {
                         "Sign up",
                         style: TextStyle(
                           color: Colors.black,
-                          decoration: TextDecoration.underline, // <-- garis bawah
+                          decoration: TextDecoration.underline,
                         ),
                       ),
                     ),

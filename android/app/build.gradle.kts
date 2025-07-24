@@ -1,14 +1,23 @@
 plugins {
     id("com.android.application")
     id("kotlin-android")
-    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
+    id("com.google.gms.google-services") // Firebase
 }
 
 android {
     namespace = "com.example.untitled1"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 35 // Bisa disesuaikan sesuai SDK kamu
+
     ndkVersion = "29.0.13113456"
+
+    defaultConfig {
+        applicationId = "com.example.untitled1"
+        minSdk = 21
+        targetSdk = 34
+        versionCode = 1
+        versionName = "1.0"
+    }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -16,25 +25,21 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
-    }
-
-    defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.untitled1"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
-        versionCode = flutter.versionCode
-        versionName = flutter.versionName
+        jvmTarget = "11"
     }
 
     buildTypes {
-        release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
+        debug {
             signingConfig = signingConfigs.getByName("debug")
+        }
+        release {
+            signingConfig = signingConfigs.getByName("debug") // Pakai debug untuk tes
+            isMinifyEnabled = false
+            isShrinkResources = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 }
@@ -42,3 +47,6 @@ android {
 flutter {
     source = "../.."
 }
+
+
+

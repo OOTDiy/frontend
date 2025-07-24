@@ -1,260 +1,148 @@
+// lib/featurs/accounts/signup.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter/gestures.dart';
-import 'signin.dart';
-import 'package:untitled1/views/profile/terms_conditions.dart';
+import 'package:untitled1/services/auth_service.dart';
+import 'package:untitled1/views/menu.dart';
+import 'forgot_password.dart';
 
-class SignUpScreen extends StatelessWidget {
+class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    final TextEditingController emailController = TextEditingController();
-    final TextEditingController usernameController = TextEditingController();
-    final TextEditingController passwordController = TextEditingController();
-    final TextEditingController confirmPasswordController = TextEditingController();
-    bool agreeToTerms = false;
+  State<SignUpScreen> createState() => _SignUpScreenState();
+}
 
+class _SignUpScreenState extends State<SignUpScreen> {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  bool _obscurePassword = true;
+  final AuthService authService = AuthService();
+  final RegExp emailRegex = RegExp(r'^[^@]+@gmail\.com$');
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 28.0),
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const SizedBox(height: 1),
-
-                Image.asset(
-                  'assets/iconfitur/bann.png',
-                  width: 400,
-                  height: 140,
+                const SizedBox(height: 40),
+                Center(
+                  child: Image.asset(
+                    'assets/iconfitur/bann.png',
+                    width: 400,
+                    height: 140,
+                  ),
                 ),
-
-                const SizedBox(height: 1),
+                const SizedBox(height: 20),
 
                 // Email
-                _buildInputField('E-mail', 'Input e-mail', emailController),
-
-                // Username
-                _buildInputField('Username', 'Input username', usernameController),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: const Text("Email"),
+                ),
+                const SizedBox(height: 6),
+                TextField(
+                  controller: emailController,
+                  decoration: InputDecoration(
+                    hintText: "Input Gmail address",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
 
                 // Password
-                _buildPasswordField('Password', 'Input password', passwordController),
-
-                // Confirm Password
-                _buildPasswordField('Confirm Password', 'Input password', confirmPasswordController),
-
-                const SizedBox(height: 12),
-
-                // Terms & conditions
-                Row(
-                  children: [
-                    StatefulBuilder(
-                      builder: (context, setState) {
-                        return Checkbox(
-                          value: agreeToTerms,
-                          onChanged: (value) {
-                            setState(() {
-                              agreeToTerms = value ?? false;
-                            });
-                          },
-                        );
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: const Text("Password"),
+                ),
+                const SizedBox(height: 6),
+                TextField(
+                  controller: passwordController,
+                  obscureText: _obscurePassword,
+                  decoration: InputDecoration(
+                    hintText: "Input password",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                          _obscurePassword ? Icons.visibility_off : Icons.visibility),
+                      onPressed: () {
+                        setState(() {
+                          _obscurePassword = !_obscurePassword;
+                        });
                       },
                     ),
-                    Flexible(
-                      child: RichText(
-                        text: TextSpan(
-                          text: "I agree to OOTDIY's ",
-                          style: const TextStyle(color: Colors.black),
-                          children: [
-                            TextSpan(
-                              text: 'terms & conditions',
-                              style: const TextStyle(
-                                color: Colors.blue,
-                                decoration: TextDecoration.underline,
-                              ),
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => const TermsConditionsScreen(),
-                                    ),
-                                  );
-                                },
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
 
-                const SizedBox(height: 12),
+                const SizedBox(height: 16),
 
-                // Sign Up Button
+                // Sign up Button
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {
-                      // TODO: Handle sign up logicnya di sini y
-                    },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFFF7043), // Orange color
+                      backgroundColor: Colors.deepOrange,
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(6),
+                        borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    child: const Text(
-                      'Sign up',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
+                    onPressed: () async {
+                      final email = emailController.text.trim();
+                      final password = passwordController.text.trim();
 
-                const SizedBox(height: 20),
-
-                // Divider with OR
-                Row(
-                  children: const [
-                    Expanded(child: Divider(thickness: 1)),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Text('or'),
-                    ),
-                    Expanded(child: Divider(thickness: 1)),
-                  ],
-                ),
-
-                const SizedBox(height: 20),
-
-                // Sign in with Google
-                OutlinedButton.icon(
-                  style: OutlinedButton.styleFrom(
-                    minimumSize: const Size.fromHeight(48),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    side: const BorderSide(color: Colors.redAccent),
-                  ),
-                  icon: SvgPicture.asset(
-                    'assets/iconfitur/google-button.svg',
-                    width: 24,
-                    height: 24,
-                  ),
-                  label: const Text("Sign in with Google"),
-                  onPressed: () {
-                    // Google sign-in logic here
-                  },
-                ),
-                const SizedBox(height: 32),
-
-                // Already have account
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text('Already have an account? '),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const SignInScreen()),
+                      if (email.isEmpty || password.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Please fill in all fields")),
                         );
-                      },
-                      child: const Text(
-                        'Sign in',
-                        style: TextStyle(
-                          color: Colors.blue,
-                          decoration: TextDecoration.underline,
-                        ),
-                      ),
+                        return;
+                      }
+
+                      if (!emailRegex.hasMatch(email)) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Email must be @gmail.com")),
+                        );
+                        return;
+                      }
+
+                      try {
+                        final user = await authService.signUpWithEmail(
+                          email: email,
+                          password: password,
+                        );
+
+                        if (user != null) {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (_) => const HomeScreen()),
+                          );
+                        }
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("Sign up failed: ${e.toString()}")),
+                        );
+                      }
+                    },
+                    child: const Text(
+                      "Sign up",
+                      style: TextStyle(color: Colors.white),
                     ),
-                  ],
+                  ),
                 ),
-                const SizedBox(height: 30),
+                const SizedBox(height: 40),
               ],
             ),
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildInputField(
-      String label,
-      String hint,
-      TextEditingController controller,
-      ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 6),
-        TextField(
-          controller: controller,
-          decoration: InputDecoration(
-            hintText: hint,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(6),
-            ),
-          ),
-        ),
-        const SizedBox(height: 16),
-      ],
-    );
-  }
-
-  Widget _buildPasswordField(
-      String label,
-      String hint,
-      TextEditingController controller,
-      ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 6),
-        StatefulBuilder(
-          builder: (context, setState) {
-            bool _obscureText = true;
-            return TextField(
-              controller: controller,
-              obscureText: _obscureText,
-              decoration: InputDecoration(
-                hintText: hint,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _obscureText ? Icons.visibility_off : Icons.visibility,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _obscureText = !_obscureText;
-                    });
-                  },
-                ),
-              ),
-            );
-          },
-        ),
-        const SizedBox(height: 16),
-      ],
     );
   }
 }
